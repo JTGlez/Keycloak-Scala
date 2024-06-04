@@ -1,0 +1,77 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(compile, None, None)[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: Compile / compile[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 1 Scala source to /home/jtglez/dev/KeycloakREST/target/scala-2.13/classes ...[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:4:21: object http4s is not a member of package sttp.client3[0m
+[0m[[0m[31merror[0m] [0m[0mimport sttp.client3.http4s.Http4sBackend[0m
+[0m[[0m[31merror[0m] [0m[0m                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:7:19: object dsl is not a member of package org.http4s[0m
+[0m[[0m[31merror[0m] [0m[0mimport org.http4s.dsl.io._[0m
+[0m[[0m[31merror[0m] [0m[0m                  ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:9:19: object server is not a member of package org.http4s[0m
+[0m[[0m[31merror[0m] [0m[0mdid you mean Header or parser?[0m
+[0m[[0m[31merror[0m] [0m[0mimport org.http4s.server.blaze._[0m
+[0m[[0m[31merror[0m] [0m[0m                  ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:10:19: object server is not a member of package org.http4s[0m
+[0m[[0m[31merror[0m] [0m[0mdid you mean Header or parser?[0m
+[0m[[0m[31merror[0m] [0m[0mimport org.http4s.server.Router[0m
+[0m[[0m[31merror[0m] [0m[0m                  ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:14:24: not found: value KeycloakConfig[0m
+[0m[[0m[31merror[0m] [0m[0m  val keycloakConfig = KeycloakConfig.Secret([0m
+[0m[[0m[31merror[0m] [0m[0m                       ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:15:5: not found: value realm[0m
+[0m[[0m[31merror[0m] [0m[0m    realm = "master",[0m
+[0m[[0m[31merror[0m] [0m[0m    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:16:5: not found: value clientId[0m
+[0m[[0m[31merror[0m] [0m[0m    clientId = "admin-cli",[0m
+[0m[[0m[31merror[0m] [0m[0m    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:17:5: not found: value clientSecret[0m
+[0m[[0m[31merror[0m] [0m[0m    clientSecret = "b753f3ba-c4e7-4f3f-ac16-a074d4d89353"[0m
+[0m[[0m[31merror[0m] [0m[0m    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:20:48: not found: value Http4sBackend[0m
+[0m[[0m[31merror[0m] [0m[0m  implicit val backend: SttpBackend[IO, Any] = Http4sBackend.usingBlazeClientBuilder[IO](BlazeClientBuilder[IO](global)).resource.use(identity).unsafeRunSync()[0m
+[0m[[0m[31merror[0m] [0m[0m                                               ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:20:113: not found: value global[0m
+[0m[[0m[31merror[0m] [0m[0m  implicit val backend: SttpBackend[IO, Any] = Http4sBackend.usingBlazeClientBuilder[IO](BlazeClientBuilder[IO](global)).resource.use(identity).unsafeRunSync()[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                                                ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:20:135: missing argument list for method identity in object Predef[0m
+[0m[[0m[31merror[0m] [0m[0mUnapplied methods are only converted to functions when a function type is expected.[0m
+[0m[[0m[31merror[0m] [0m[0mYou can make this conversion explicit by writing `identity _` or `identity(_)` instead of `identity`.[0m
+[0m[[0m[31merror[0m] [0m[0m  implicit val backend: SttpBackend[IO, Any] = Http4sBackend.usingBlazeClientBuilder[IO](BlazeClientBuilder[IO](global)).resource.use(identity).unsafeRunSync()[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                                                                      ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:21:32: not found: type KeycloakClient[0m
+[0m[[0m[31merror[0m] [0m[0m  implicit val keycloakClient: KeycloakClient[IO, Any] = new KeycloakClient[IO, Any](keycloakConfig)[0m
+[0m[[0m[31merror[0m] [0m[0m                               ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:21:62: not found: type KeycloakClient[0m
+[0m[[0m[31merror[0m] [0m[0m  implicit val keycloakClient: KeycloakClient[IO, Any] = new KeycloakClient[IO, Any](keycloakConfig)[0m
+[0m[[0m[31merror[0m] [0m[0m                                                             ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:23:22: not found: value Keycloak[0m
+[0m[[0m[31merror[0m] [0m[0m  val usersService = Keycloak.Users[IO, Any][0m
+[0m[[0m[31merror[0m] [0m[0m                     ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:26:14: constructor cannot be instantiated to expected type;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : (T1, T2)[0m
+[0m[[0m[31merror[0m] [0m[0m required: org.http4s.Request[cats.effect.IO][0m
+[0m[[0m[31merror[0m] [0m[0m    case GET -> Root / "auth" =>[0m
+[0m[[0m[31merror[0m] [0m[0m             ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:26:10: not found: value GET[0m
+[0m[[0m[31merror[0m] [0m[0m    case GET -> Root / "auth" =>[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:26:22: not found: value /[0m
+[0m[[0m[31merror[0m] [0m[0m    case GET -> Root / "auth" =>[0m
+[0m[[0m[31merror[0m] [0m[0m                     ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:26:17: not found: value Root[0m
+[0m[[0m[31merror[0m] [0m[0m    case GET -> Root / "auth" =>[0m
+[0m[[0m[31merror[0m] [0m[0m                ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:34:17: not found: value Router[0m
+[0m[[0m[31merror[0m] [0m[0m  val httpApp = Router("/" -> httpRoutes).orNotFound[0m
+[0m[[0m[31merror[0m] [0m[0m                ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:37:5: not found: value BlazeServerBuilder[0m
+[0m[[0m[31merror[0m] [0m[0m    BlazeServerBuilder[IO](global)[0m
+[0m[[0m[31merror[0m] [0m[0m    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/jtglez/dev/KeycloakREST/src/main/scala/Main.scala:37:28: not found: value global[0m
+[0m[[0m[31merror[0m] [0m[0m    BlazeServerBuilder[IO](global)[0m
+[0m[[0m[31merror[0m] [0m[0m                           ^[0m
+[0m[[0m[31merror[0m] [0m[0m21 errors found[0m
+[0m[[0m[31merror[0m] [0m[0m(Compile / [31mcompileIncremental[0m) Compilation failed[0m
+[0m[[0m[31merror[0m] [0m[0mTotal time: 6 s, completed Jun 3, 2024, 3:48:53 PM[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(idea-shell, None, None)[0m

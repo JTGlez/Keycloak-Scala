@@ -3,10 +3,6 @@
   "auth-server-url": "http://localhost:8080/",
   "ssl-required": "external",
   "resource": "react-client",
-  "verify-token-audience": true,
-  "credentials": {
-    "secret": "86kk7tXw0ebTl8aPIqhe6tW2RiEaaLpo"
-  },
-  "use-resource-role-mappings": true,
+  "public-client": true,
   "confidential-port": 0
 }
