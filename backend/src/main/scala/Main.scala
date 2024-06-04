@@ -1,4 +1,3 @@
-
 import cats.effect._
 import cats.implicits._
 import org.http4s.blaze.client.BlazeClientBuilder
@@ -8,14 +7,12 @@ import org.http4s.dsl.io._
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.circe.CirceEntityCodec._
-import org.http4s.client._
-import org.http4s.client.dsl.io._
-import org.http4s.client.blaze._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.typelevel.ci.CIString
+
 object Main extends IOApp {
-  case class ClientRepresentation(
+  private case class ClientRepresentation(
      clientId: String,
      enabled: Boolean,
      clientAuthenticatorType: String,
@@ -27,19 +24,24 @@ object Main extends IOApp {
      serviceAccountsEnabled: Boolean
    )
 
-  case class TokenResponse(access_token: String)
-  case class AdminTokenRequest(username: String, password: String)
+  private case class CreateClientRequest(
+    clientId: String,
+    clientSecret: String,
+    redirectUris: List[String],
+    publicClient: Boolean,
+    directAccessGrantsEnabled: Boolean,
+    serviceAccountsEnabled: Boolean
+  )
 
-  case class CreateClientRequest(clientId: String, clientSecret: String)
+  case class CreateClientResponse(id: String, clientId: String, name: Option[String], description: Option[String])
 
+  private case class TokenResponse(access_token: String)
+  private case class AdminTokenRequest(username: String, password: String)
 
   private val keycloakUrl = "http://localhost:8080"
   private val realm = "Secrets-Realm"
-  private val adminUsername = "admin"
-  private val adminPassword = "admin"
 
   private val client = BlazeClientBuilder[IO].resource
-
   private def getAdminToken(username: String, password: String): IO[String] = {
     val data = UrlForm(
       "grant_type" -> "password",
@@ -58,31 +60,42 @@ object Main extends IOApp {
     }
   }
 
-  private def createClient(clientId: String, clientSecret: String, adminToken: String): IO[String] = {
+  private def createClient(clientId: String, clientSecret: String, redirectUris: List[String], publicClient: Boolean, directAccessGrantsEnabled: Boolean, serviceAccountsEnabled: Boolean, adminToken: String): IO[Response[IO]] = {
     val clientRepresentation = ClientRepresentation(
       clientId = clientId,
       enabled = true,
       clientAuthenticatorType = "client-secret",
       secret = clientSecret,
-      redirectUris = List("https://localhost:8080/*"),
+      redirectUris = redirectUris,
       protocol = "openid-connect",
-      publicClient = false,
-      directAccessGrantsEnabled = true,
-      serviceAccountsEnabled = true
+      publicClient = publicClient,
+      directAccessGrantsEnabled = directAccessGrantsEnabled,
+      serviceAccountsEnabled = serviceAccountsEnabled
     )
 
     client.use { httpClient =>
       val request = Request[IO](
         method = Method.POST,
-        uri = Uri.unsafeFromString(s"$keycloakUrl/auth/admin/realms/$realm/clients")
+        uri = Uri.unsafeFromString(s"$keycloakUrl/admin/realms/$realm/clients")
       ).withHeaders(
         Header.Raw(CIString("Authorization"), s"Bearer $adminToken"),
         Header.Raw(CIString("Content-Type"), "application/json")
       ).withEntity(clientRepresentation.asJson)
 
-      httpClient.expect[String](request)
+      // Print the request body for debugging
+      IO(println(s"Request body: ${clientRepresentation.asJson.noSpaces}")) *>
+        httpClient.run(request).use { response =>
+          if (response.status.isSuccess) {
+            IO.pure(response)
+          } else {
+            response.as[String].flatMap { body =>
+              IO.raiseError(new Exception(s"Failed to create client: ${response.status} - $body"))
+            }
+          }
+        }
     }
   }
+
 
   private def getToken(clientId: String, clientSecret: String): IO[TokenResponse] = {
     val data = UrlForm(
@@ -102,12 +115,41 @@ object Main extends IOApp {
   }
 
   private val createClientService = HttpRoutes.of[IO] {
-    case req@POST -> Root / "create-client" =>
+    case req @ POST -> Root / "create-client" =>
       for {
+        // Commented out: Extract the Bearer token from the Authorization header
+        // authHeader <- IO.fromOption(req.headers.get[Authorization].map(_.credentials))(new Exception("Authorization header missing"))
+        // adminToken <- IO.fromOption(authHeader match {
+        //   case Credentials.Token(AuthScheme.Bearer, token) => Some(token)
+        //   case _ => None
+        // })(new Exception("Invalid Authorization header format"))
+
+        // Automatically fetch a new admin token
+        adminToken <- getAdminToken("admin", "admin")
+
+        // Parse the request body
         createClientRequest <- req.as[CreateClientRequest]
-        adminToken <- getAdminToken(adminUsername, adminPassword)
-        createResponse <- createClient(createClientRequest.clientId, createClientRequest.clientSecret, adminToken)
-        response <- Ok(s"Client ${createClientRequest.clientId} created with secret ${createClientRequest.clientSecret}")
+
+        // Create the client in Keycloak
+        createResponse <- createClient(
+          createClientRequest.clientId,
+          createClientRequest.clientSecret,
+          createClientRequest.redirectUris,
+          createClientRequest.publicClient,
+          createClientRequest.directAccessGrantsEnabled,
+          createClientRequest.serviceAccountsEnabled,
+          adminToken
+        )
+
+        // Print the createResponse for debugging
+        _ <- IO(println(s"createResponse: ${createResponse.status}"))
+
+        // Respond with a success or error message
+        response <- if (createResponse.status.isSuccess) {
+          Ok(s"Client ${createClientRequest.clientId} created successfully.")
+        } else {
+          InternalServerError(s"Failed to create client: ${createResponse.status}")
+        }
       } yield response
   }
 
@@ -148,4 +190,3 @@ object Main extends IOApp {
       .as(ExitCode.Success)
   }
 }
-
